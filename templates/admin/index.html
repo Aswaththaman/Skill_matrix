@@ -1,0 +1,15 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+    <div class="module">
+        <h2>Welcome to the Admin Panel</h2>
+        
+        {% comment %} <br>
+        <p><a href = "{% url 'userwise_skill_review' %}"> user based reviews </a></p>
+        <br> {% endcomment %}
+        <p> <a href = "{% url 'export_review_data' %}"> Export Review Data </a> </p>
+    </div>
+
+    <!-- Ensure you call the parent template's content block to retain the default content -->
+    {{ block.super }}
+{% endblock %}

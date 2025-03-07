@@ -1,0 +1,23 @@
+[MASTER]
+# List of modules to be checked for linting, use `**` to include subdirectories
+ignore=migrations,tests
+
+[MESSAGES CONTROL]
+# Disable specific warning messages (e.g., docstring warnings)
+disable=C0111, F0010, E1101
+
+
+[REPORTS]
+# Report format
+output-format=colorized  # Makes pylint output colorful (useful for terminal)
+
+[BASIC]
+# Set naming style for variables, classes, etc.
+variable-naming-style=snake_case
+function-naming-style=snake_case
+class-naming-style=PascalCase
+
+[DESIGN]
+# Maximum number of arguments allowed in a function or method
+max-args=5
+

@@ -1,0 +1,306 @@
+
+
+{% comment %} added expand all and collapse all for the unrated part {% endcomment %}
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Rate Skill</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <!-- Font Awesome for stars -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+
+    {% comment %} <form action="{% url 'logout_custom' %}" method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger" style="position: absolute; top: 20px; right: 20px;">Logout</button>
+    </form> {% endcomment %}
+    <div class="container">
+        <a href = "{% url 'logout' %}"> <button type="submit" class="btn btn-danger" style="position: absolute; top: 20px; right: 20px;">Logout</button> </a>
+
+
+        <!-- Reviewed Skills Section with Collapsible -->
+        <h2>
+            <a data-toggle="collapse" href="#collapseReviewedSkills">
+                Reviewed Skills
+            </a>
+        </h2>
+
+
+        <!-- used partial for the reviewed data -->
+        {% comment %} <!--{% include 'user_skills/partials/_reviewed_skill.html' %}--> {% endcomment %}
+
+        <div id="collapseReviewedSkills" class="panel-collapse collapse">
+            {% if reviewed_skills %}
+                <ul class="list-group">
+                    {% for skill, rating in reviewed_skills.items %}
+                        <li class="list-group-item">
+                            {{ skill.name }} ({{ skill.category }} -> {{ skill.subcategory }})
+                            <!-- Display filled stars based on the rating -->
+                            <div class="star-rating">
+                                <div class="star-rating" style="display: flex; align-items: center;">
+                                    {% comment %} {% for i in star_range %}
+                                        <span class="fa fa-star {% if i <= rating %}checked{% endif %} "></span>
+                                    {% endfor %} {% endcomment %}
+
+
+                                    {% for i in star_range %}
+                                    <span class="fa fa-star {% if i <= rating %}checked{% endif %} {% if rating %}disabled-rating{% endif %}"></span>
+                                {% endfor %}
+
+
+
+                        <div style="display: flex; align-items: center; margin-left:20px;">
+                                <!--new code -->
+                                    <!-- Edit Button -->
+                            <form action="{% url 'edit_skill_rating' skill_id=skill.id %}" method="GET">
+                                <button type="submit" class="btn btn-primary">Edit ratings</button>
+                            </form>
+                            <!-- edit icon -->
+                            {% comment %} <a href="{% url 'edit_skill_rating' user_id=user_id skill_id=skill.id %}" class="glyphicon glyphicon-pencil" style="margin-right: 10px;"></a> {% endcomment %}
+
+                           <!-- Delete Icon with Confirmation Message -->
+                           <!-- <a href="{% url 'delete_skill_rating' user_id=user_id skill_id=skill.id %}" class="glyphicon glyphicon-trash" onclick="return confirm('Are you sure you want to delete this rating?')"></a> -->
+                            <div class="skill-row" data-skill-id="{{ skill.id }}" data-user-id="{{ user_id }}">
+                                    
+                                    <a href="javascript:void(0);" class="glyphicon glyphicon-trash" 
+                                    onclick="showConfirmation(this)" style="margin-left: 20px">
+                                    </a>
+                                        <div class="confirm-box" style="display: none; margin-left: 10px;">
+                                            <span>Are you sure?</span>
+                                            <a href="{% url 'delete_skill_rating' user_id=user_id skill_id=skill.id %}" class="btn btn-sm btn-danger">Yes
+                                    </a>
+                                            <button class="btn btn-sm btn-secondary" onclick="hideConfirmation(this)">No</button>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No skills have been reviewed yet.</p>
+            {% endif %}
+        </div>
+        <hr>
+
+        <!-- Unrated Skills Section -->
+        <h2>Unrated Skills</h2>
+                        <!-- Expand/Collapse All Buttons -->
+                        <button id="toggleExpandCollapse" class="btn btn-secondary">Expand All</button>
+
+
+        <br><br>
+
+        <!-- Search Bar Form -->
+        <form method="GET" action="{% url 'rate_skill' user_id=user_id %}">
+            <div class="form-group">
+                <div class="input-group">
+                    <input type="text" name="search_query" class="form-control" placeholder="Search skills..." value="{{ request.GET.search_query }}">
+                    <span class="input-group-btn">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </span>
+                </div>
+            </div>
+        </form>
+
+
+
+        <!-- Display Skills -->
+         <!-- partial for unrated skill -->
+
+            {% comment %} <!-- {% include 'user_skills/partials/_unrated_skill.html' %}  --> {% endcomment %}
+            <div class="skills-list">
+                {% for skill in skill_structure %}
+                    <div class="skill-item">
+                        <h3>{{ skill.name }}</h3>
+                        <p>{{ skill.description }}</p>
+                    </div>
+                {% empty %}
+                    <p>No skills found </p>
+                {% endfor %}
+            </div>
+            
+            <form method="post" action="{% url 'rate_skill' user_id=user_id %}">
+                {% csrf_token %}
+            
+                {% for category, subcategories in skill_structure.items %}
+                    <div class="panel panel-default unrated-skill" style="margin-bottom: 10px;">
+                        <!-- Category title -->
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" href="#collapse{{ forloop.counter }}">
+                                    {{ category }}
+                                </a>
+                            </h4>
+                        </div>
+            
+                        <!-- Collapsible subcategories -->
+                        <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse unrated-skill-collapse">
+                            <ul class="list-group">
+                                {% for subcategory, skills in subcategories.items %}
+                                    <li class="list-group-item" style="margin-left: 20px;">
+                                        <strong>{{ subcategory }}</strong>
+                                        <ul>
+                                            {% for skill in skills %}
+                                                <li style="margin-left: 40px;">
+                                                    {{ skill.name }}
+                                                    <!-- Star Rating System -->
+                                                    <div class="star-rating">
+                                                        <span class="fa fa-star" data-index="1" data-skill-id="{{ skill.id }}"></span>
+                                                        <span class="fa fa-star" data-index="2" data-skill-id="{{ skill.id }}"></span>
+                                                        <span class="fa fa-star" data-index="3" data-skill-id="{{ skill.id }}"></span>
+                                                        <span class="fa fa-star" data-index="4" data-skill-id="{{ skill.id }}"></span>
+                                                        <span class="fa fa-star" data-index="5" data-skill-id="{{ skill.id }}"></span>
+                                                    </div> 
+            
+                                                    <!-- Hidden input to store the rating for each skill -->
+                                                    <input type="hidden" name="ratings[{{ skill.id }}]" id="rating-{{ skill.id }}">
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% endfor %}
+            
+                <!-- Submit button -->
+                <!-- <button type="submit" class="btn btn-primary">Submit All Ratings</button> -->
+            </form>
+            
+            
+            </div>
+        
+
+    <!-- Added JavaScript to handle expand/collapse all functionality for unrated skills -->
+    
+
+    <!-- Add some styles to handle the appearance of stars -->
+    <style>
+       .fa-star {
+            font-size: 30px;
+            cursor: pointer;
+            color: #ccc; /* Unselected stars */
+        }
+
+        .fa-star.checked {
+            color: #f39c12; /* Selected stars */
+        }
+
+        .disabled-rating {
+            pointer-events: none; /* Prevent clicking */
+            color: #ddd; /* Make the stars look "grayed out" */
+        }
+    </style>
+</body>
+</html>
+
+<script>
+
+
+//newly added to have expand functionality at the beginning
+    $(document).ready(function () {
+        // Automatically expand all unrated skills sections on page load
+        $(".unrated-skill .panel-collapse").collapse("show");
+    });
+
+
+//for confirmation message for the delete in reviewed skills
+    function showConfirmation(element) {
+        // Show the confirmation box near the delete icon
+        $(element).siblings('.confirm-box').show();
+    }
+    
+    function hideConfirmation(button) {
+        // Hide the confirmation box
+        $(button).closest('.confirm-box').hide();
+    }
+
+
+
+
+        $(document).ready(function () {
+        $(".fa-star").on("click", function () {
+            var rating = $(this).data("index");
+            var skillId = $(this).data("skill-id");
+    
+            // Highlight the stars up to the selected one
+            $(this).siblings().removeClass("checked");
+            $(this).prevAll().addClass("checked");
+            $(this).addClass("checked");
+    
+            // Send the rating to the backend via AJAX
+            $.ajax({
+                url: "/new_skill/rate-skill-ajax/",
+                type: "POST",
+                data: {
+                    skill_id: skillId,
+                    rating: rating,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    if (response.message === "Rating saved successfully") {
+                        console.log("Rating saved successfully.");
+                        window.location.reload();
+                        <!--  alert("Your rating has been saved!"); -->
+                        updateStars(response.updated_rating);
+                    } else {
+                        console.error("Error saving rating:", response.message);
+                        <!-- alert("Failed to save the rating. Please try again."); -->
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error saving rating:", error);
+                    <!-- alert("Failed to save the rating. Please try again."); -->
+                }
+            }); 
+
+    
+            // Function to update the star ratings on the page
+            function updateStars(updatedRating) {
+                var skillId = updatedRating.skill_id;
+                var rating = updatedRating.rating;
+    
+                // Find the skill's stars based on the skill_id
+                var stars = $(".fa-star[data-skill-id='" + skillId + "']");
+    
+                // Remove the 'checked' class from all stars
+                stars.removeClass("checked");
+    
+                // Add the 'checked' class to the stars up to the selected rating
+                stars.slice(0, rating).addClass("checked");
+    
+                // Optionally, update the hidden input to match the new rating
+                $("#rating-" + skillId).val(rating);
+            }
+        });
+
+
+    
+    // Expand/Collapse All functionality (unchanged)
+    $("#toggleExpandCollapse").on("click", function () {
+        var collapsePanels = $(".unrated-skill-collapse");
+
+        if (collapsePanels.hasClass("in")) {
+            collapsePanels.collapse("hide");
+            $(this).text("Expand All");
+        } else {
+            collapsePanels.collapse("show");
+            $(this).text("Collapse All");
+        }
+    });
+}); 
+
+
+
+</script> 
+
+
+

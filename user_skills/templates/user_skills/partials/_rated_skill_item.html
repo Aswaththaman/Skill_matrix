@@ -1,0 +1,39 @@
+
+
+
+
+    
+      <div style="display: flex; align-items: center; margin-top: 15px;" id="skill_{{skill_subcatgory}}{{skill_category}}{{ skill_id }}">
+        <!-- Skill Name and Rating -->
+        <li>
+            <div class="mr-2" style = "font-size: 15px; margin-bottom: 5px;">{{ skill_name|capfirst }}:</div> <!-- Adds space between the skill name and stars -->
+            <span class="fa fa-star {% if skill_rating >= 1 %}checked{% endif %}" data-index="1" data-skill-id="{{  skill_id }}" data-skill-name="{{ skill_name }}" data-skill-subcategory="{{ skill_subcatgory }}" data-skill-category="{{ skill_category }}"></span>
+            <span class="fa fa-star {% if skill_rating >= 2 %}checked{% endif %}" data-index="2" data-skill-id="{{  skill_id }}" data-skill-name="{{ skill_name }}" data-skill-subcategory="{{ skill_subcatgory }}" data-skill-category="{{ skill_category }}"></span>
+            <span class="fa fa-star {% if skill_rating >= 3 %}checked{% endif %}" data-index="3" data-skill-id="{{  skill_id }}" data-skill-name="{{ skill_name }}" data-skill-subcategory="{{ skill_subcatgory }}" data-skill-category="{{ skill_category }}"></span>
+            <span class="fa fa-star {% if skill_rating >= 4 %}checked{% endif %}" data-index="4" data-skill-id="{{  skill_id }}" data-skill-name="{{ skill_name }}" data-skill-subcategory="{{ skill_subcatgory }}" data-skill-category="{{ skill_category }}"></span>
+            <span class="fa fa-star {% if skill_rating >= 5 %}checked{% endif %}" data-index="5" data-skill-id="{{  skill_id }}" data-skill-name="{{ skill_name }}" data-skill-subcategory="{{ skill_subcatgory }}" data-skill-category="{{ skill_category }}"></span>
+    
+            <!-- Feedback Section -->
+            <div class="rating-feedback" id="feedback-{{ skill_id }}" style="margin-left: 10px; display: inline-block;">
+                <!-- Dynamic feedback will be inserted here -->
+            </div>
+    
+            <!-- Delete Button -->
+            <a href="javascript:void(0);" class="glyphicon glyphicon-trash delete-icon{{skill_id}}" onclick="showConfirmation(this)" style="margin-left: 20px;"></a>
+            <span id="delete_msg_{{ skill_id }}" style="margin-bottom: 0px; margin: 0px 0px; margin-left: 20px; color: red;"></span>
+    
+            <div class="confirm-box" style="display: none; margin-left: 10px;">
+                <span>Are you sure?</span>
+                <button class="btn btn-sm btn-danger confirm-delete delete_skill_ajax" 
+                        data-skill-id="{{ skill_id }}"  data-skill-name="{{ skill_name }}" data-skill-subcategory="{{ skill_subcatgory }}" data-skill-category="{{ skill_category }}" data-skill-name="{{ skill_name }}">Yes</button>
+                <button class="btn btn-sm btn-secondary undo_delete_no" onclick="hideConfirmation(this)">No</button>
+            </div>
+            
+            <span style="display: inline-flex; align-items: center;">
+                <i class="fa-solid fa-xmark" style="color: orange; padding-left: 20px; padding-right: 5px; font-size: 25px;"></i>
+                <span>Review by manager pending</span>
+            </span>
+            
+        </li> 
+        {% comment %} <br> {% endcomment %}
+    </div>

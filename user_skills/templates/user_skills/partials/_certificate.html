@@ -1,0 +1,183 @@
+<style>
+    .thead_cert_table{
+        background-color: #343a40;
+        color: white;
+        border: 1px solid black;
+    }
+
+    .thead_tr_cert_table{
+        border: 1px solid black;
+    }
+
+    .thead_th_cert_table{
+        border: 1px solid black;
+    }
+
+    .tbody_td_cert_table{
+        border: 1px solid black;
+    }
+
+    .tbody_tr_cert_table{
+        border: 1px solid black;
+    } 
+
+    .tbody_cert_table{
+        background-color: white;
+    }
+
+
+
+</style>
+
+
+<div class="container" style="padding:0px;">
+
+        <h2 class="mt-4">Certificates</h2> {% if admin_user%}<a href="{% url 'certificate_table' %}">view all user's certificates</a>{%endif%}
+
+    <div id="certificates-container">
+        <!-- Certificate form template will go here -->
+    </div>
+    {% if certificates %}
+    <h5>{{ user.get_username|capfirst }} Certificates</h5>
+
+    <div class="table-responsive" style="max-width: 700px; margin: 0px;">
+
+      <table class="table table-hover table-sm">
+        <thead class="thead_cert_table">
+            <tr class="thead_tr_cert_table">
+                <th class="thead_th_cert_table">Certificate Name</th>
+                <th class="thead_th_cert_table">Provider</th>
+                <th class="thead_th_cert_table">Status</th>
+                <th class="thead_th_cert_table" style="width:0px;">Actions</th>  <!-- New column for actions -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for certificate in certificates %}
+                <tr class="tbody_tr_cert_table">
+                    <td class="tbody_td_cert_table">{{ certificate.cert_name }}</td>
+                    <td class="tbody_td_cert_table">{{ certificate.cert_provider }}</td>
+                    <td class="tbody_td_cert_table">{{ certificate.cert_status }}</td>
+                    <td class="tbody_td_cert_table">
+
+                        <div style="display: flex;">
+                          <!-- Edit Link -->
+                          <a href="{% url 'edit_certificate' certificate.cert_map_id %}" style="margin-right: 20px; font-size: 16px">
+                              <i class="fas fa-edit"></i> 
+                          </a>
+                          
+                          {% comment %} <!-- Delete Form -->
+                          <form action="{% url 'delete_certificate' certificate.cert_map_id %}" method="post" style="display:inline;">
+                              {% csrf_token %}
+                              <button type="submit" class="glyphicon glyphicon-trash" style="border: none; background: none; font-size: 16px; color: red;">
+                                  
+                              </button>
+                          </form> {% endcomment %}
+
+
+                          <!-- Delete Form -->
+                          <form action="{% url 'delete_certificate' certificate.cert_map_id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="glyphicon glyphicon-trash" 
+                                    style="border: none; background: none; font-size: 18px; color: red;">
+                            </button>
+                          </form>
+                      </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+ 
+    
+
+    </div>
+    
+    
+    
+    {% else %}
+        <h5 style= "color: red;">No certificates uploaded</h5>
+    {% endif %}
+
+    </div>
+    
+    <div class="mt-3">
+        <a  data-toggle="modal" data-target="#certificate_modal" style="color: black; font-size: 16px"><i class="fa-solid fa-circle-plus"></i> Click to add a new certificate</a>
+
+    </div>
+</div>
+
+
+
+
+
+
+<div id="certificate_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Certification Details</h4>
+        </div>
+        <div class="modal-body">
+            <form action= "{% url 'certificate_add' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <!-- Name of Certification -->
+                <div class="form-group">
+                    <label for="certification-name">Name of Certification</label>
+                    <input type="text" id="certification-name" name="certification-name" class="form-control" required>
+                </div>
+
+                <!-- Certification Issued By -->
+                <div class="form-group">
+                    <label for="issued-by">Certification Issued By</label>
+                    <input type="text" id="issued-by" name="issued-by" class="form-control" required>
+                </div>
+
+                <!-- Certification Status -->
+                <div class="form-group">
+                    <label for="certification-status">Certification Status</label>
+                    <select id="certification-status" name="certification-status" class="form-control" required>
+                        <option value="active">Active</option>
+                        <option value="expired">Expired</option>
+                    </select>
+                </div>
+
+
+                <!-- Certification issued Date -->
+                <div class="form-group">
+                    <label for="issued-date">Certification Issued Date</label>
+                    <input type="date" id="issued-date" name="issued-date" class="form-control" required>
+                </div>
+
+
+                <!-- Certification Expiry Date -->
+                <div class="form-group">
+                    <label for="expiry-date">Certification Expiry Date</label>
+                    <input type="date" id="expiry-date" name="expiry-date" class="form-control" required>
+                </div>
+
+
+                <!--Certification url-->
+                <div class="form-group">
+                    <label for="certification-url">Url of Certification</label>
+                    <input type="text" id="certification-url" name="certification-url" class="form-control" required>
+                </div>
+
+
+
+                <!-- Submit Button -->
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success btn-block">Submit Certification</button>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  

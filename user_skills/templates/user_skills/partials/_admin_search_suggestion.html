@@ -1,0 +1,31 @@
+
+
+
+
+{% for suggestion in suggestion_data %}
+  <div class="suggestion-item" 
+       data-category="{{ suggestion.category|default:'' }}" 
+       data-subcategory="{{ suggestion.subcategory|default:'' }}" 
+       data-skill="{{ suggestion.skill|default:'' }}" 
+       data-username="{{ suggestion.user|default:'' }}">
+    <div>
+      {% if type == 'skill' %}
+        <h5 style="margin-bottom: 0px;">
+          {{ suggestion.category|capfirst }} → {{ suggestion.subcategory|capfirst }} → {{ suggestion.skill|capfirst }}
+        </h5>
+      {% elif type == 'user' %}
+        <h5 style="margin-bottom: 0px;">
+          {{ suggestion.user }}
+        </h5>
+      {% endif %}
+    </div>
+  </div>
+{% endfor %}
+
+
+<style>
+  .level2tree{
+    margin-top: 10px;
+  }
+
+</style>

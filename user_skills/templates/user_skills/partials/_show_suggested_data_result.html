@@ -1,0 +1,47 @@
+<div class = "suggestionresulttablediv">
+
+    {% if rated_admin_data %}
+
+        <div class="table-responsive">
+            
+            <table class="table table-bordered table-hover table_for_suggested_data">
+                <thead class= "table_header_suggest_admin">
+                    <tr>
+                        <th>User</th>
+                        <th>Rating</th>
+                        <th>Skill</th>
+                        <th>Category</th>
+                        <th>Subcategory</th>
+                    </tr>
+                </thead>
+                <tbody class = "table_body_suggest_admin">
+                    {% for rating in rated_admin_data %}
+                        <tr>
+                            <td>{{ rating.user.username|capfirst }}</td>
+                            <td>{{ rating.rating|capfirst }} stars</td>
+                            <td>{{ rating.skill.new_skill.name|capfirst }}</td>
+                            <td>{{rating.skill.categorysubcategory.category.name|capfirst}}</td>
+                            <td>{{rating.skill.categorysubcategory.subcategory.name|capfirst}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    {% endif %}
+</div>
+<style>
+    .table_header_suggest_admin{
+        background-color: #F1AB86;
+    }
+
+    .table_body_suggest_admin{
+        background-color: rgba(255, 255, 255, 0.5);
+    }
+ 
+    .table_for_suggested_data{
+        max-width: 700px;
+        margin: 20px;
+    }
+
+</style>

@@ -1,0 +1,259 @@
+
+
+
+<!-- admin_rated_data.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static%}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Rated Data</title>
+
+    <!-- Bootstrap & FontAwesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    {% comment %} <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> {% endcomment %}
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+
+
+
+<body>
+    <button type="button" class="btn btn-danger" style="position: absolute; top: 20px; right: 20px; background-color:rgb(149, 77, 249);">
+        <a href="{% url 'logout' %}" style=" color:white;">Logout</a>
+    </button>
+
+
+
+<a href="{%url 'skill_dashboard'%}" style="position: absolute; top: 20px; left: 20px; font-size: 30px; color:#07b80a;"><i class="fa-solid fa-house"></i></a>
+
+  {% if admin_user%}
+  <a href = "{% url 'export_review_data' %}" style="position: absolute; top: 70px; right: 20px;">Export Ratings Data</a>
+  <a href = "{% url 'export_cert_data'%}" style= "position: absolute; top: 90px; right: 20px;">Export Certificate Data</a>
+  <a href = "{% url 'managerpage'%}" style= "position: absolute; top: 110px; right: 20px;">Manager validate</a>
+  {%endif%}
+    <div style='text-align: center; border: 3px solid LightSteelBlue; background-color: #d5f1d3;'>
+        <br>
+        <br>
+        <h4 style="color:rgb(149, 77, 249);">Skill Matrix Application</h4>
+
+        {% if admin_user %}
+        <h3 class="text-success">Welcome Admin {{ user.get_username }}</h3>
+        {% else %}
+        <h3 class="text-success">Welcome {{ user.get_username }}</h3>
+        {% endif %}
+    </div>
+    {% comment %} <div class="container align-items-center justify-content-center searchbar_both_container" >
+        <div class="row">
+            <!-- Search Box for Skills -->
+            <div class="col-md-6">
+                <h3>Search by skill or user</h3>
+                <div class="search-container" style="max-width: 300px; width: 100%;">
+                    <input type="text" id="user-rated" placeholder="Search for unrated skills..." class="form-control">
+                </div>
+                <!-- Results will be dynamically loaded here -->
+                <div id="search-results">
+                    {% include 'user_skills/partials/_admin_rated_list.html' with rated_admin_data=rated_admin_data %}
+                </div>
+            </div>
+
+            
+        </div>
+
+    </div> {% endcomment %}
+
+
+    <div class= "suggestion_search_maindiv">
+        <h3>Search with Suggestions</h3>
+
+        <div class="autocomplete-container">
+            <div style="display: flex; align-items: center;">
+                <input id="searchInputsuggestion" class= "search_bar_suggestion" type="text" placeholder="Search here..."> 
+                <span>
+                    <div class="custom-control custom-switch enableusersearchcbox">
+                        <input type="checkbox" class="custom-control-input" id="usersearchtoggle" >
+                        <label class="custom-control-label" for="usersearchtoggle">search by user</label>
+                      </div>                      
+                </span>
+            </div>
+            <div id="suggestionsList" class="autocomplete-items">
+                {% include 'user_skills/partials/_admin_search_suggestion.html'%}
+                {% comment %} {% include 'user_skills/partials/_admin_search_suggestion.html' with suggestions=searchsuggestions%} {% endcomment %}
+
+            </div>
+        </div>
+    </div>
+
+    <div id="search-results1">
+        {% include 'user_skills/partials/_show_suggested_data_result.html' with rated_admin_data=rated_admin_data %}
+    </div>
+    
+</body>
+
+
+<script>
+    {% comment %} $(document).on('input', '#user-rated', function(){
+        var squery = $(this).val();
+        if(squery.length === 0){
+            $('#search-results').html('<p>No results found.</p>');
+            console.log("the length is 0")
+        }
+        $.ajax({
+            url: "{% url 'admin_rated_search' %}",  // URL for SearchRatingData view
+            type: "GET",
+            data: {query: squery},
+            success: function(response) {
+                // Dynamically update the search results section with the partial template
+                $('#search-results').html(response);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+                //$('#search-results').html('<p>No results found.</p>');
+            }
+        });
+    }); {% endcomment %}
+
+
+
+    {% comment %} $(document).on('input', '#user-rated-user', function(){
+        var squery = $(this).val();
+        
+        $.ajax({
+            url: "{% url 'admin_rated_search_user' %}",  // URL for SearchRatingData view
+            type: "GET",
+            data: {query: squery},
+            success: function(response) {
+                // Dynamically update the search results section with the partial template
+                $('#search-results-user').html(response);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+                $('#search-results-user').html('<p>No results found.</p>');
+            }
+        });
+    }); {% endcomment %}
+
+    $(document).on('input', '#searchInputsuggestion', function(){
+        var squery = $(this).val();
+        if(squery.length === 0){
+            $('#suggestionsList').html('<p>No results found.</p>');
+            console.log("the length is 0")
+        }
+        var isChecked = document.getElementById('usersearchtoggle').checked;
+        tog_data = (isChecked ? 'user' : 'skill');
+        $.ajax({
+            url: "{% url 'admin_search_suggestion' %}",  // URL for SearchRatingData view
+            type: "GET",
+            data: {query: squery, tog_data: tog_data},
+            success: function(response) {
+                $('#suggestionsList').html(response);
+                
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+                $('#suggestionsList').html('<p>No results found.</p>');
+            }
+        });
+    });
+
+
+
+    $(document).on('click', '.suggestion-item', function() {
+        var category = $(this).data('category');
+        var subcategory = $(this).data('subcategory');
+        var skill = $(this).data('skill');
+        var user_name = $(this).data('username');
+        console.log(user_name)
+    
+        $('#searchInputsuggestion').val(skill);
+    
+        $('#selected-skill').text(category + ' → ' + subcategory + ' → ' + skill);
+        
+        $.ajax({
+            url: "{% url 'admin_suggested_result' %}",
+            type: "GET",
+            data: { skill: skill, subcat: subcategory, cat: category, user_name: user_name },
+            success: function(response) {
+                $('#search-results1').html(response);
+                if (response.length===0){
+                    $('#search-results1').html('<p>No results found.</p>');
+                }
+            }
+        });
+    });
+    
+    $(document).ready(function() {
+        $('#searchInputsuggestion').on('input', function() {
+          var textboxValue = $(this).val();
+          if (textboxValue.length === 0) {
+            $('.suggestionresulttablediv').remove(); 
+          }
+        });
+      });
+
+
+
+
+    
+</script>
+
+<style>
+    body {
+        background-image:  url("{% static 'images/background.jpg' %}");
+        background-size: cover; /* Ensure the image covers the entire page */
+        background-position: center center; /* Center the image */
+        background-repeat: no-repeat; /* Prevent the image from repeating */
+        background-attachment: fixed; /* Fix the image when scrolling */
+    }
+
+    html, body {
+        height: 100%; /* Make sure the body and html elements fill the full viewport height */
+        margin: 0; /* Remove default margin */
+    }
+
+    .searchbar_both_container{
+        margin-top: 20px;
+    }
+
+    #search-results{
+        margin-top: 20px;
+    }
+
+    #search-results-user{
+        margin-top: 20px;
+    }
+
+    .suggestion-item {
+        max-width: 450px;
+        padding: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        background-color: #E3D8F1;
+    }
+    
+    .suggestion-item:hover {
+        background-color: #f0f0f0; /* Change to your preferred hover color */
+    }
+    
+    .suggestion_search_maindiv{
+        margin:20px;
+    }
+
+    .search_bar_suggestion{
+        width: 250px;
+    }
+
+    .enableusersearchcbox{
+        margin-left : 20px;
+    }
+
+    #suggestionsList{
+        margin-top: 10px;
+    }
+</style>
+</html>

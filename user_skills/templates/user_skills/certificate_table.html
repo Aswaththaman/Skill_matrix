@@ -1,0 +1,80 @@
+
+
+{% load static%}
+
+    <!-- Bootstrap & FontAwesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    {% comment %} <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> {% endcomment %}
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <body>
+        <button type="button" class="btn btn-danger" style="position: absolute; top: 20px; right: 20px; background-color:rgb(149, 77, 249);">
+            <a href="{% url 'logout_custom' %}" style=" color:white;">Logout</a>
+        </button>
+    
+        <a href="{%url 'skill_dashboard'%}" style="position: absolute; top: 20px; left: 20px; font-size: 30px;"><i class="fa-solid fa-house"></i></a>
+    
+    
+      
+        <a href = "{% url 'export_review_data' %}" style="position: absolute; top: 60px; right: 20px;">Export Ratings Data</a>
+        <a href = "{% url 'export_cert_data'%}" style= "position: absolute; top: 80px; right: 20px;">Export Certificate Data</a>
+        <a href = "{% url 'admin_view_rated'%}" style= "position: absolute; top: 100px; right: 20px;">View rated data</a>
+        <a href = "{% url 'managerpage'%}" style= "position: absolute; top: 120px; right: 20px;">Manager validate</a>
+  
+      
+        <div style='text-align: center; border: 3px solid LightSteelBlue; background-color: #d5f1d3;'>
+            <br>
+            <br>
+            <h4 style="color:rgb(149, 77, 249);">Skill Matrix Application</h4>
+    
+            
+            <h3 class="text-success">Welcome Admin {{ user.get_username }}</h3>
+    
+        </div>
+    
+        <div class="panel panel-primary cert_headings">
+            <div class="panel-heading">
+                <h4>All Users Certificates</h4>
+            </div>
+        </div>
+
+        
+    <table class="table table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>User</th>
+                <th>certificate Name</th>
+                <th>Provider</th>
+                <th>Issue Date</th>
+                <th>Expire Date</th>
+                <th>Status</th>
+                <th>URL</th>
+              </tr>
+        </thead>
+        <tbody>
+            {%for cert in all_cert%}
+            <tr>
+                <td>{{cert.user_id.username}}</td>
+                <td>{{cert.cert_id.name}}</td>
+                <td>{{cert.cert_id.provider}}</td>
+                <td>{{cert.issue_date}}</td>
+                <td>{{cert.expiry_date}}</td>
+                <td>{{cert.status}}</td>
+                <td>{{cert.url}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+<style>
+.cert_headings{
+    text-align: center;
+    
+}
+</style>

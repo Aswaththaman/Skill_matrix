@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rated Skills</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    {% load static %}
+
+    {% comment %} <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> {% endcomment %}
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    
+    <style>
+        .fa-star { color: #ccc; cursor: pointer; }
+        .fa-star.checked { color: #f39c12; }
+
+        html, body {
+          height: 100%; /* Make sure the body and html elements fill the full viewport height */
+          margin: 0; /* Remove default margin */
+      }
+      
+      body {
+          background-image:  url("{% static 'images/background.jpg' %}");
+          background-size: cover; /* Ensure the image covers the entire page */
+          background-position: center center; /* Center the image */
+          background-repeat: no-repeat; /* Prevent the image from repeating */
+          background-attachment: fixed; /* Fix the image when scrolling */
+      }
+
+      ul{
+        list-style-type: none;
+      }
+
+
+      .panel {
+        max-width: 700px; /* The panel will grow, but won't exceed 600px */
+        width: 100%; /* This will make the panel flexible */
+    }
+    #recent_activity {
+      position: absolute;
+      top: 150px;
+      right: 20px;
+      width: 250px;
+      background: rgba(255, 255, 255, 0.15); /* Lighter and more transparent white */
+      backdrop-filter: blur(15px) saturate(1.5); /* Stronger blur and enhanced color saturation */
+      -webkit-backdrop-filter: blur(15px) saturate(1.5); /* For Safari support */
+      border-radius: 12px; /* Smooth and more rounded corners */
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); /* More pronounced shadow for better separation */
+      padding: 15px; /* Internal spacing */
+      border: 1px solid rgba(255, 255, 255, 0.3); /* Light, translucent border */
+      z-index: 100; /* Ensure it stays on top */
+      color: black; /* White text for contrast */
+      
+  }
+
+  .alertmessagecontainer{
+    position: fixed;
+    left: 70%;
+    z-index: 1;
+  }
+
+  .alert-danger{
+    width: 300px;
+  }
+  
+  #report_issue_form_container{
+    margin-top: 70px;
+  }
+
+
+  .unverified_msg_div{
+    display: none;
+  }
+
+  .unverified_icon_div:hover + .unverified_msg_div{
+    display: block;
+    color: red;
+  }
+      
+    </style>
+</head>
+<body>
+
+
+
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="logoutModalLabel">Confirm Logout</h4>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to log out?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    
+                    <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#logoutModal" style="position: absolute; top: 20px; right: 20px; background-color:rgb(149, 77, 249);">
+            Logout
+        </button>
+        <img src="https://i.ibb.co/YFhf1sxf/recreated-1.png" alt="image-3" border="0" style="position:absolute; left: 40px; width: 200px; height: 140px;">
+    
+    
+        <a href = "{% url 'export_review_data' %}" style="position: absolute; top: 60px; right: 20px;">Export Ratings Data</a>
+        <a href = "{% url 'export_cert_data'%}" style= "position: absolute; top: 80px; right: 20px;">Export Certificate Data</a>
+        <a href = "{% url 'admin_view_rated'%}" style= "position: absolute; top: 100px; right: 20px;">View rated data</a>
+      {% if admin_user or mgr_user%}
+      <a href = "{% url 'managerpage'%}" style= "position: absolute; top: 120px; right: 20px;">Manager validate</a>
+      {%endif%}
+      
+        {%if unverified%}
+        
+        <div style= "position: absolute; top: 20px; left: 20px; font-size: 25px; color: red;">
+            <div class= "unverified_icon_div">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </div>
+            <div class="unverified_msg_div">
+                <p style="color: black; font-size: 15px;">Dear Manager, new ratings from your team are available for review.<p>
+            </div>
+        </div>
+        {%endif%}
+
+        {% comment %} {%if mgr_user%}
+        <a href = "{% url 'managerpage'%}" style= "position: absolute; top: 120px; right: 20px;">Manager validate</a>
+        
+        {%endif%} {% endcomment %}
+      
+        <div style='text-align: center; border: 3px solid LightSteelBlue; background-color: #d5f1d3;'>
+            <br>
+            <br>
+            <br>
+            <h4 style="color:rgb(149, 77, 249);">Skill Matrix Application</h4>
+            {% if admin_user %}
+            <h3 class="text-success">Welcome Admin {{ user.get_username }}</h3>
+            {% else %}
+            <h3 class="text-success">Welcome {{ user.get_username }}</h3>
+            {% endif %}
+    </div>
+
+    
+    <div class="container">
+
+        <div class = "alertmessagecontainer">
+            <div id="deleteAlert" class="alert alert-danger alert-dismissable" style="display:none;">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                deleted successfully!!
+            </div>
+
+            <div id="ratedAlert" class="alert alert-success alert-dismissable" style="display:none; ">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                rated successfully!!
+            </div>
+        </div>
+        
+
+        <h2>Rated Skills <button id="toggleExpandCollapseRated" class="btn btn-primary">Expand All Rated</button></h2>
+        <div id="rated-skills-container">
+            {% include 'user_skills/partials/_rated_skills.html' with skills_by_category=skills_by_category user_id=user_id %}
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Unrated Skills <button id="toggleExpandCollapseUnrated" class="btn btn-primary">Expand All Unrated</button></h2>
+
+    
+        
+        <div id="skills-list"></div>
+        <br>
+ 
+
+            <div class="search-container" style = " max-width: 300px; width: 100%;">
+                <input type="text" id="unrated-search" placeholder="Search for unrated skills..." class="form-control">
+            </div>
+            <br>
+            <div id="unrated-skills-container">
+                {% include 'user_skills/partials/_unrated_skills.html' with unrated_skills_by_category=unrated_skills_by_category %}
+            </div>
+        </div>
+
+
+        <div class="container" id = 'certificate_container'>
+            {% include 'user_skills/partials/_certificate.html' %}
+        </div>
+
+        <div class="container" id = 'report_issue_form_container'>
+            {% include 'user_skills/partials/_report_issue_form.html' %}
+            <br>
+            <p></p>
+        </div>
+
+        
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+
+</body>
+</html>
+
+
+
+ <script>
+
+function showConfirmation(element) {
+    $(element).siblings('.confirm-box').show();
+}
+
+function hideConfirmation(button) {
+    $(button).closest('.confirm-box').hide();
+}
+
+
+$("#toggleExpandCollapseRated").on("click", function () {
+    var ratedSkillsContainer = $("#rated-skills-container");
+    var collapsePanels = ratedSkillsContainer.find(".panel-collapse-rated");
+    var allIcons = ratedSkillsContainer.find("i.fa-solid");
+
+    if (collapsePanels.hasClass("in")) {
+        collapsePanels.collapse("hide");
+        $(this).text("Expand All Rated");
+
+        allIcons.each(function () {
+            $(this).removeClass("fa-angle-up").addClass("fa-angle-down");
+        });
+    } else {
+        collapsePanels.collapse("show");
+        $(this).text("Collapse All Rated");
+
+        allIcons.each(function () {
+            $(this).removeClass("fa-angle-down").addClass("fa-angle-up");
+        });
+    }
+});
+
+
+
+
+$("#toggleExpandCollapseUnrated").on("click", function () {
+    var unratedSkillsContainer = $("#unrated-skills-container");
+    var collapsePanels = unratedSkillsContainer.find(".panel-collapse-unrated");
+    var allIcons = unratedSkillsContainer.find("i.fa-solid"); 
+
+    if (collapsePanels.hasClass("in")) {
+        collapsePanels.collapse("hide");
+        $(this).text("Expand All Unrated");
+
+        allIcons.each(function () {
+            $(this).removeClass("fa-angle-up").addClass("fa-angle-down");
+        });
+    } else {
+        collapsePanels.collapse("show");
+        $(this).text("Collapse All Unrated");
+
+        allIcons.each(function () {
+            $(this).removeClass("fa-angle-down").addClass("fa-angle-up");
+        });
+    }
+});
+
+var last_action = null;
+var last_deleted_element = null
+var last_rated_element = null
+var lastDeletedSkillId = null; 
+var del_last_subact = null;
+let latest_rated = null;
+var rated_last_subcat = null;
+var last_deleted_category = null
+var last_update_feedback = null
+var rated_last_cat = null
+
+
+    $(document).ready(function () {
+
+    
+        $(document).on("click", ".fa-star", function () {
+            
+            var rating = $(this).data("index");
+            var skillId = $(this).data("skill-id");
+            const user_id = "{{ user_id }}";
+            var ratingFeedbackDiv = $('#feedback-' + skillId); 
+            var skillName = $(this).data('skill-name');
+            var skill_cat = $(this).data('skill-category');
+            var skill_subcat = $(this).data('skill-subcategory');
+
+            
+            
+    
+            $(this).siblings().removeClass("checked");
+            $(this).prevAll().addClass("checked");
+            $(this).addClass("checked");
+    
+            $.ajax({
+                url: "{% url 'update_rating' %}",
+                type: "POST",
+                data: {
+                    skill_id: skillId,
+                    rating: rating,
+                    skillName: skillName,
+                    user_id: user_id,
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    skill_cat: skill_cat,
+                    skill_subcat: skill_subcat
+                },
+                success: function(response) {
+                    if (response.success) {
+                        console.log("Rating updated successfully!");
+                        ratingFeedbackDiv.html('<i class="fa fa-check" style="color: green;"></i> Rating saved');
+                
+                        var categorySlug = response.category_slug;
+                        var subcategorySlug = response.subcategory_slug;
+                        var createdSkillHTML = response.skill_html;
+                        
+
+                        $('#ratedAlert').fadeIn();  
+
+                        setTimeout(function() {
+                            $('#ratedAlert').fadeOut();  
+                        }, 5000);
+
+
+                        $('.fa-star.unrated[data-skill-id="' + skillId + '"]').css('pointer-events', 'none');//for disable star click once rated
+                        if (last_action === 'delete'){
+                            if ($(last_deleted_element).length) {
+                                $(last_deleted_element).remove();
+                                console.log('Removed last deleted element -', last_deleted_element);
+                                let rated_msg_noskill = $(`[id^="skill_${del_last_subact}${last_deleted_category}"]`).length;
+                            if (rated_msg_noskill === 0){
+                                $('#collapse-subcat-' + last_deleted_category+ '-'+del_last_subact+'-').html(
+                                `<ul><h4 id="all_rated-${last_deleted_category}-${del_last_subact}">no skill is being rated</h4></ul>`
+                            );//adding message no skill is rated for the last deleted item
+                            
+                            console.log('no skill rated - ', last_deleted_category, del_last_subact);
+                            }
+                            } else {
+                                console.log('Last deleted element not found');
+                            }
+                        }
+
+                        
+
+                        last_rated_element = '#unrated_'+skillId
+
+                        //removes the update message for the previous one
+                        if($('#feedback-'+latest_rated).length && response.message === 'Rating updated successfully!'){
+                           //$('#feedback-'+ latest_rated).hide()
+                           $('#feedback-'+ latest_rated).text('')
+                        }
+
+                        if(response.message === 'Rating updated successfully!'){
+                          $('#recent_activity ul').append('<li>Updated ' + skillName + '</li>');
+                        }
+                        
+                        if(response.message === 'Rating created and saved successfully!'){
+                          $('#recent_activity ul').append('<li>newly rated ' + skillName + '</li>');
+                        }
+
+                        if ($('#no_skill_reviewed_msg').length) {
+                            // Remove the element if it exists
+                            $('#no_skill_reviewed_msg').remove();
+                            console.log('Removed no_skill_reviewed_msg with ID: no_skill_reviewed_msg');
+                        }
+
+                        // Remove the previously rated skill from DOM
+                        if (latest_rated !== null && latest_rated !== skillId && last_action === 'rating') {
+                            // Remove the previous rated skill from DOM
+                            $('#unrated_'+ latest_rated).remove();
+                            
+                            console.log('Removed previously rated skill: unrated_', latest_rated);
+
+                            let unratedLength = $(`[id^="unrated_${rated_last_subcat}${rated_last_cat}"]`).length;
+                            if (unratedLength === 0) {
+                                // Inject the <h4> tag indicating all skills are rated
+                                $('#collapse-unrated-subcat' + rated_last_subcat+'-'+rated_last_cat).html(
+                                    
+                                    `<ul><h4 id="all_rated${rated_last_subcat}${rated_last_cat}">All skills are reviewed</h4></ul>`
+                                );
+                                console.log('All skills are reviewed');
+                            }
+                        }
+
+                        //removes the no skill message if a rating is added newly to it
+                        let no_skill_msg_len = $(`[id^="all_rated-${categorySlug}-${subcategorySlug}"]`).length;
+
+                        if (no_skill_msg_len) {
+                            // Remove the element with a specific ID
+                            $(`#all_rated-${categorySlug}-${subcategorySlug}`).remove();
+                            console.log('Removed no skill message for', categorySlug, subcategorySlug);
+                        }
+                        
+
+                        latest_rated = skillId
+                        rated_last_subcat = subcategorySlug
+                        rated_last_cat = categorySlug
+                        last_action = 'rating'//new
+
+                      if(categorySlug !== undefined && subcategorySlug !== undefined){
+                        // Check if category container exists
+                        var categoryContainer = $("[id^='collapse-cat-" + categorySlug + "-']");
+                        if (categoryContainer.length === 0 && categorySlug!=='undefined') {
+                            console.log("Category container not found. Creating it.");
+                
+                            // Create category container if not found
+                            var categoryHTML = `<div class="panel panel-primary">
+                              <div class="panel-heading" style="display: flex; justify-content: space-between; align-items: center;">
+                                  <h4 class="panel-title" style="margin: 0;">
+                                      <a data-toggle="collapse" href="#collapse-cat-${categorySlug}-" style="text-decoration: none; color: inherit; font-size: 17.5px" >${categorySlug}</a>
+                                  </h4>
+                                  <a data-toggle="collapse" href="#collapse-cat-${categorySlug}-" onclick="this.textContent = this.textContent.trim() === 'Expand' ? 'Collapse' : 'Expand';"  style="color: #fff; font-size: 14px;">
+                                  Expand
+                                  </a>
+                                      
+                                  
+                              </div>
+                              <div id="collapse-cat-${categorySlug}-" class="panel-collapse-rated collapse">
+                              </div>
+                              
+                          </div>`;      
+                        
+
+
+                            // Append it to the desired parent container
+                            $('#rated-skills-container').append(categoryHTML);
+                            //for changing the display from lower to upper and relace - with space
+                            $(`a[href="#collapse-cat-${categorySlug}-"]`).text(function(_, text) {
+                                // Replace hyphens with spaces and capitalize the first letter of the string
+                                return text.replace(/-/g, ' ').replace(/^./, text[0].toUpperCase());
+                            });
+                                                    
+                            categoryContainer = $("[id^='collapse-cat-" + categorySlug + "-']");
+                        }
+                
+                        // Now check for subcategory container
+                        var subcategoryContainerRated = $("[id^='collapse-subcat-" + categorySlug + "-" + subcategorySlug + "-']");
+                        if (subcategoryContainerRated.length === 0 && subcategorySlug!=='undefined') {
+                            console.log("Subcategory container not found. Creating it.");
+                
+                            // Create subcategory container if not found
+                            var subcategoryHTML = `<div class="panel-body">
+                              <div class="panel panel-info">
+                                  <div class="panel-heading" style="display: flex; justify-content: space-between; align-items: center;">
+                                      <!-- Subcategory title -->
+                                      <a data-toggle="collapse" href="#collapse-subcat-${categorySlug}-${subcategorySlug}-" style="text-decoration: none; color: inherit; font-size: 16px;">${subcategorySlug}</a>
+                                      <!-- Down arrow icon -->
+                                      <a data-toggle="collapse" href="#collapse-subcat-${categorySlug}-${subcategorySlug}-" onclick="this.textContent = this.textContent.trim() === 'Expand' ? 'Collapse' : 'Expand';"  style="color: #31708f; font-size: 14px;">
+                                          Expand
+                                      </a>
+                                  </div>
+                                  <div id="collapse-subcat-${categorySlug}-${subcategorySlug}-" class="panel-collapse-rated collapse">
+                                      <ul></ul>
+                                  </div>
+                              </div>
+                          </div>`;
+  
+                            // Append it to the category container
+                            categoryContainer.append(subcategoryHTML);
+
+                            //for changing first letter to caps and replace the - to space
+                            $(`a[href="#collapse-subcat-${categorySlug}-${subcategorySlug}-"]`).text(function(_, text) {
+                                // Replace hyphens with spaces and capitalize the first letter of the string
+                                return text.replace(/-/g, ' ').replace(/^./, text[0].toUpperCase());
+                            });
+
+                            subcategoryContainerRated = $("[id^='collapse-subcat-" + categorySlug + "-" + subcategorySlug + "-']");
+                        }
+                        
+                        // Finally, append the skill HTML to the subcategory container
+                        subcategoryContainerRated.find("ul").append(createdSkillHTML);
+                      }
+                    }
+
+                }
+                ,
+                error: function() {
+                    console.log('Error in rating AJAX call');
+                }
+            });
+        });
+    });
+    
+
+// Search functionality with review add for search
+$(document).on('input', '#unrated-search', function() {
+    var searchQuery = $(this).val();  // Get the value from the search input
+    $.ajax({
+        url: "{% url 'search_unrated_skills' %}",  
+        type: "GET",
+        data: { query: searchQuery },  // Send the query to the backend
+        success: function(response) {
+
+            if ($(response).find('.panel-body').length > 0) { 
+                // Check if the response contains '.panel-body', indicating subcategories or skills
+                $('#unrated-skills-container').html(response);
+                //console.log("Valid response with subcategories or skills:", response);
+            } else {
+                // Handle the case where no subcategories or skills are found
+                console.log('No skills found');
+                $('#unrated-skills-container').html('<p>No Results Found</p>');
+            }
+            
+        }
+        
+    });
+});
+
+
+
+
+
+$(document).ready(function() {
+    //var lastDeletedSkillId = null; // Variable to store the last deleted skill ID
+    //var del_last_subact = null;
+    delete_skill_rated();
+    
+    
+    function delete_skill_rated() {
+        $(document).on("click", ".delete_skill_ajax", function () {
+            var skill_Id = $(this).data("skill-id");
+            var subcat = $(this).data("skill-subcategory");
+            var cat = $(this).data("skill-category");
+            const user_id = "{{ user_id }}";
+            var skillName = $(this).data("skill-name");
+            //console.log('Skill ID:', skill_Id,'user_id', user_id, 'subcat',subcat, 'cat', cat);
+            
+
+            $.ajax({
+                url: '{% url "delete_by_ajax" %}',
+                type: 'POST',
+                data: {
+                    skill_id: skill_Id,
+                    user_id: user_id,
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    skill_category: cat, //new
+                    skill_subcategory: subcat,//new
+                    skill_name: skillName
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Show a success message
+                        var categorySlug = response.category_slug;
+                        var subcategorySlug = response.subcategory_slug;
+
+                        //removes delete icon
+                        remove_delete_icon = '.delete-icon' + skill_Id
+                        console.log(remove_delete_icon)
+                        $(remove_delete_icon).remove();
+
+                        console.log(skillName)
+                        $('#recent_activity ul').append('<li>deleted ' + skillName + '</li>');
+                        
+
+                        $('#deleteAlert').fadeIn();  // Fade in the alert
+
+                        // Set a timer to hide the alert after 5 seconds
+                        setTimeout(function() {
+                            $('#deleteAlert').fadeOut();  // Fade out the alert
+                            $('#skill_'+subcategorySlug+categorySlug+skill_Id).remove()
+                        }, 2000);
+                        
+                        setTimeout(function(){
+                            let remove_element_deleted = $(`[id^="skill_${subcategorySlug}${categorySlug}"]`).length;
+                        
+                            if (remove_element_deleted === 1){
+                                $('#collapse-subcat-' + categorySlug+ '-'+subcategorySlug+'-').html(
+                                    
+                                `<ul><h4 id="all_rated-${categorySlug}-${subcategorySlug}">no skill is being rated</h4></ul>`
+                            )
+                            }
+                        })
+
+                        //$('.fa-star[data-skill-id="' + skillId + '"]').css('pointer-events', 'none');
+
+                        //$('.fa-star.skill_[data-skill-id="' + skill_Id + '"]').css('pointer-events', 'none');//for disable star click once rated
+                        
+
+                        //removes the last rated element if the action is delete after a rating
+                        if (last_action === 'rating'){
+                            $(last_rated_element).remove()
+                            console.log('Removed last rated - ', last_rated_element)
+
+
+
+
+                            //newly added for last rated to remove followed by a delete
+                            // Inject the <h4> tag indicating all skills are rated based on the condition
+                            let unratedLength = $(`[id^="unrated_${rated_last_subcat}${rated_last_cat}"]`).length;
+                            if(unratedLength===0){
+                            $('#collapse-unrated-subcat' + rated_last_subcat+ '-'+ rated_last_cat).html(
+                                
+                                `<ul><h4 id="all_rated${rated_last_subcat}${rated_last_cat}">All skills are reviewed</h4></ul>`
+                            );
+                            console.log('All skills are reviewed');
+                            }
+                            
+                        }
+
+
+                        $('#delete_msg_' + skill_Id).text('Successfully Deleted');
+                        $('#feedback-'+ skill_Id).remove()
+                        $('.undo_delete_no').click();//to hide the delete messag, click on no automatically
+                        
+                        
+
+                          // If there's a previously deleted skill, remove it from the DOM
+                        if (lastDeletedSkillId !== null && lastDeletedSkillId !== skill_Id && del_last_subact !== null && last_action === 'delete') {
+                            // Remove the previous deleted skill from DOM
+                            $('#skill_' +del_last_subact+ last_deleted_category +lastDeletedSkillId).remove();
+                            console.log('Removed previous deleted skill: skill_', lastDeletedSkillId);
+
+                            let rated_msg_noskill = $(`[id^="skill_${del_last_subact}${last_deleted_category}"]`).length;
+                            //console.log('count',rated_msg_noskill)
+                            if (rated_msg_noskill === 0) {
+                                // Inject the <h4> tag indicating all skills are rated
+                                $('#collapse-subcat-' + last_deleted_category+ '-'+del_last_subact+'-').html(
+                                    
+                                    `<ul><h4 id="all_rated-${last_deleted_category}-${del_last_subact}">no skill is being rated</h4></ul>`
+                                );
+                                console.log('no skill rated - ', last_deleted_category, del_last_subact);
+                            }
+
+
+                        }
+
+                        let rated_msg_noskill_len = $(`[id^="skill_${del_last_subact}${last_deleted_category}"]`).length;
+                        //console.log('length', rated_msg_noskill_len, 'subcat:', del_last_subact)
+                        if (rated_msg_noskill_len && del_last_subact!==null) {
+                            // Remove the element if it exists
+                            $('#all_rated-'+categorySlug+'-'+del_last_subact).remove();
+                            console.log('Removed element with ID:', '#all_rated-'+categorySlug+'-'+del_last_subact);
+                        }
+
+                        
+                        // Mark this skill as the latest deleted skill
+                        lastDeletedSkillId = skill_Id;
+                        del_last_subact = subcategorySlug
+                        last_deleted_category = categorySlug
+                        last_action = 'delete';
+                        last_deleted_element = '#skill_'+ subcategorySlug + categorySlug + skill_Id;
+                               
+                        
+                        // Append the deleted skill's HTML to the appropriate category and subcategory
+                        var categorySlug = response.category_slug;
+                        var subcategorySlug = response.subcategory_slug;
+                        var deletedSkillHTML = response.skill_html;
+                        
+
+                        // Find the correct subcategory container
+                        var subcategoryContainer = $(`#collapse-unrated-subcat${subcategorySlug}-${categorySlug} ul`);
+                        
+                        if (subcategoryContainer.length > 0) {
+                            $('#all_rated' + subcategorySlug+categorySlug).remove();
+                            
+                            subcategoryContainer.append(deletedSkillHTML); // Append the deleted skill's HTML
+                        } else {
+                            console.log('Subcategory container not found');
+                        }
+
+                        // Optionally, you can hide the deleted skill in the "rated" section or take further actions
+                    } else {
+                        console.log(response.message); // Log the error if any
+                    }
+                },
+                error: function() {
+                    console.log('Error in deletion AJAX call');
+                }
+            });
+        });
+    }
+});
+
+
+$('#certificate-form').on('submit', function(event) {
+    event.preventDefault(); // Prevent the form from submitting the default way
+    
+    // Collect form field values
+    var cert_name = $('#certification-name').val(); 
+    var cert_issue_by = $('#issued-by').val(); 
+    var cert_status = $('#certification-status').val(); 
+    var cert_issue_date = $('#issue-date').val(); 
+    var cert_expiry_date = $('#expiry-date').val(); 
+    var cert_url = $('#certification-url').val(); 
+    
+    // Log data to console (for debugging)
+    console.log(cert_name, cert_issue_by, cert_status, cert_issue_date, cert_expiry_date, cert_url);
+
+    // Corrected the AJAX call
+    $.ajax({
+        url: '{% url "delete_by_ajax" %}', // Replace this with the correct view URL
+        type: 'POST',
+        data: {
+            cert_name: cert_name,
+            cert_issue_by: cert_issue_by,
+            csrfmiddlewaretoken: '{{ csrf_token }}', // CSRF protection for Django
+            cert_status: cert_status,
+            cert_issue_date: cert_issue_date,
+            cert_expiry_date: cert_expiry_date,
+            cert_url: cert_url
+        },
+        success: function(response) {
+            if (response.success) {
+                alert(response.message); // Show success message
+                $('#certificate-form')[0].reset(); // Optionally reset the form
+            } else {
+                alert('Error: ' + response.message); // Show error message from the response
+            }
+        },
+        error: function(xhr, status, error) {
+            alert('An error occurred. Please try again.'); // Alert for errors
+            console.error('Error details:', error); // Log the error details for debugging
+        }
+    });
+});
+
+
+</script>
+

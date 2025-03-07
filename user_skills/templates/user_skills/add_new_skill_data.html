@@ -1,0 +1,250 @@
+
+
+
+
+{% comment %} 
+
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<h1>Skill directory</h1>
+
+<div class="container">
+    {% for category, subcategories in skill_structure.items %}
+        <div class="panel panel-default" style="margin-bottom: 10px;">
+            <!-- Category title -->
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" href="#collapse{{ forloop.counter }}">
+                        {{ category }}
+                    </a>
+                </h4>
+            </div>
+            
+            <!-- Collapsible subcategories -->
+            <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse">
+                <ul class="list-group">
+                    {% for subcategory, skills in subcategories.items %}
+                        <li class="list-group-item" style="margin-left: 20px;">
+                            <strong>{{ subcategory }}</strong> <!-- Subcategory title -->
+                               
+                            
+                            <ul>
+                                {% for skill in skills %}
+                                <form method="post"> 
+                                    {%csrf_token%}
+                                    <li style="margin-left: 40px;">
+                                        {{ skill.name }} <!-- Skills -->
+                                        <input type="checkbox" name="skills" value="{{ skill.id }}" id="skill_{{ skill.id }}_{{ forloop.counter }}">
+                                        
+                                    </li>
+                                    
+                                {% endfor %}
+                                <button type="submit" class="btn btn-success">Save Selected Skills</button>
+                                </form>
+
+                                <form method="post">
+                                    <h5>add new skill to the sub-category "{{subcategory}}"</h5>
+                                    {% csrf_token %}
+                                    <label for="{{ add_skill.name.id_for_label }}">{{ add_skill.name.label }}</label>
+                                    {{ add_skill.name }}
+                                    <input type="hidden" name="category" value="{{ category }}">
+                                    <input type="hidden" name="subcategory" value="{{subcategory}}">
+                                    <button type="submit" name="submit">add skill</button>
+                                </form>
+
+                            </ul>
+                        </li>
+                    {% endfor %}
+
+
+                            <br>
+                            <form method="post"> 
+                                <h5>add new sub-category to the category "{{category}}"</h5>
+                                {% csrf_token %}
+                                <label for="{{ add_skill.subcategory.id_for_label }}">{{ add_skill.subcategory.label }}</label>
+                                {{ add_skill.subcategory }}
+
+                                <label for="{{ add_skill.name.id_for_label }}">{{ add_skill.name.label }}</label>
+                                {{ add_skill.name }}
+                                <input type="hidden" name="category" value="{{ category }}">
+                                <button type="submit" name="skill_submit">add sub - category</button>
+                            </form>
+
+                </ul>
+            </div>
+        </div>
+    {% endfor %}
+
+    <!-- Add Category Section with Unique Collapse ID -->
+    <div class="panel panel-default" style="margin-top: 20px;">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" href="#collapse_add_category">Add Category</a>
+            </h4>
+        </div>
+        <div id="collapse_add_category" class="panel-collapse collapse">
+            <div class="panel-body">
+                <br>
+                <form method="post">
+                    <h5>Add New Category</h5>
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="{{ add_skill.category.id_for_label }}">{{ add_skill.category.label }}</label>
+                        {{ add_skill.category }}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ add_skill.subcategory.id_for_label }}">{{ add_skill.subcategory.label }}</label>
+                        {{ add_skill.subcategory }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ add_skill.name.id_for_label }}">{{ add_skill.name.label }}</label>
+                        {{ add_skill.name }}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" name="skill_submit">Add New Category</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+
+ <!-- add skill to the data by admin -->
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<h1>Skill directory</h1>
+<h2>you are logged in as {{user}}</h2>
+
+<div class="container">
+    {% for category, subcategories in skill_structure.items %}
+        <div class="panel panel-default" style="margin-bottom: 10px;">
+            <!-- Category title -->
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" href="#collapse{{ forloop.counter }}">
+                        {{ category }}
+                    </a>
+                </h4>
+            </div>
+            
+            <!-- Collapsible subcategories -->
+            <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse">
+                <ul class="list-group">
+                    {% for subcategory, skills in subcategories.items %}
+                        <li class="list-group-item" style="margin-left: 20px;">
+                            <strong>{{ subcategory }}</strong> <!-- Subcategory title -->
+                               
+                            
+                            <ul>
+                                {% for skill in skills %}
+                                <form method="post"> 
+                                    {%csrf_token%}
+                                    <li style="margin-left: 40px;">
+                                        {{ skill.name }} <!-- Skills -->
+                                        {% comment %} <input type="checkbox" name="skills" value="{{ skill.id }}" id="skill_{{ skill.id }}_{{ forloop.counter }}">
+                                        
+                                    </li>
+                                    
+                          
+                                <button type="submit" class="btn btn-success">Save Selected Skills</button> {% endcomment %}
+                                {% endfor %}
+                                </form>
+
+                                <form method="post">
+                                    <h5>add new skill to the sub-category "{{subcategory}}"</h5>
+                                    {% csrf_token %}
+                                    <label for="{{ add_skill.name.id_for_label }}">{{ add_skill.name.label }}</label>
+                                    {{ add_skill.name }}
+                                    <input type="hidden" name="category" value="{{ category }}">
+                                    <input type="hidden" name="subcategory" value="{{subcategory}}">
+                                    <button type="submit" name="submit">add skill</button>
+                                </form>
+
+                            </ul>
+                        </li>
+                    {% endfor %}
+
+
+                            <br>
+                            <form method="post"> 
+                                <h5>add new sub-category to the category "{{category}}"</h5>
+                                {% csrf_token %}
+                                <label for="{{ add_skill.subcategory.id_for_label }}">{{ add_skill.subcategory.label }}</label>
+                                {{ add_skill.subcategory }}
+
+                                <label for="{{ add_skill.name.id_for_label }}">{{ add_skill.name.label }}</label>
+                                {{ add_skill.name }}
+                                <input type="hidden" name="category" value="{{ category }}">
+                                <button type="submit" name="skill_submit">add sub - category</button>
+                            </form>
+
+                </ul>
+            </div>
+        </div>
+    {% endfor %}
+
+    <!-- Add Category Section with Unique Collapse ID -->
+    <div class="panel panel-default" style="margin-top: 20px;">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" href="#collapse_add_category">Add Category</a>
+            </h4>
+        </div>
+        <div id="collapse_add_category" class="panel-collapse collapse">
+            <div class="panel-body">
+                <br>
+                <form method="post">
+                    <h5>Add New Category</h5>
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="{{ add_skill.category.id_for_label }}">{{ add_skill.category.label }}</label>
+                        {{ add_skill.category }}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ add_skill.subcategory.id_for_label }}">{{ add_skill.subcategory.label }}</label>
+                        {{ add_skill.subcategory }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ add_skill.name.id_for_label }}">{{ add_skill.name.label }}</label>
+                        {{ add_skill.name }}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" name="skill_submit">Add New Category</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% comment %} <form action="{% url 'logout' %}" method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger" style="position: absolute; top: 20px; right: 20px;">Logout</button>
+</form> {% endcomment %}

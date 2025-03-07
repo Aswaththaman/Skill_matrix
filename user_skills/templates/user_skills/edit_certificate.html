@@ -1,0 +1,79 @@
+{% load static %}
+<style>
+    body {
+        background-image:  url("{% static 'images/background.jpg' %}");
+        background-size: cover; /* Ensure the image covers the entire page */
+        background-position: center center; /* Center the image */
+        background-repeat: no-repeat; /* Prevent the image from repeating */
+        background-attachment: fixed; /* Fix the image when scrolling */
+    }
+</style>
+
+
+<!-- Modal -->
+
+<div class="modal fade in" id="editCertificateModal" tabindex="-1" role="dialog" aria-labelledby="editCertificateModalLabel" aria-hidden="true" style="display: block;">
+    
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editCertificateModalLabel">Edit Certificate</h5>
+          <button type="button" class="close" aria-label="Close" onclick="window.location.href='{% url 'skill_dashboard' %}'">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form method="post">
+            {% csrf_token %}
+  
+            <div class="form-group">
+              <label for="certification-name">Certificate Name:</label>
+              <input type="text" id="certification-name" name="certification-name" class="form-control" value="{{ cert_name }}">
+            </div>
+  
+            <div class="form-group">
+              <label for="issued-by">Issued By:</label>
+              <input type="text" id="issued-by" name="issued-by" class="form-control" value="{{ cert_issue_by }}">
+            </div>
+  
+            <div class="form-group">
+              <label for="certification-status">Status:</label>
+              <select id="certification-status" name="certification-status" class="form-control">
+                <option value="active" {% if cert_status == "active" %}selected{% endif %}>Active</option>
+                <option value="expired" {% if cert_status == "expired" %}selected{% endif %}>Expired</option>
+                <option value="revoked" {% if cert_status == "revoked" %}selected{% endif %}>Revoked</option>
+              </select>
+            </div>
+  
+            <div class="form-group">
+              <label for="issued-date">Issue Date:</label>
+              <input type="date" id="issued-date" name="issued-date" class="form-control" value="{{ cert_issue_date }}">
+            </div>
+  
+            <div class="form-group">
+              <label for="expiry-date">Expiry Date:</label>
+              <input type="date" id="expiry-date" name="expiry-date" class="form-control" value="{{ cert_expiry_date }}">
+            </div>
+  
+            <div class="form-group">
+              <label for="certification-url">Certificate URL:</label>
+              <input type="url" id="certification-url" name="certification-url" class="form-control" value="{{ cert_url }}">
+            </div>
+  
+            <div class="form-group text-center">
+              <button type="submit" class="btn btn-success btn-lg">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Bootstrap CSS -->
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Bootstrap JS -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>

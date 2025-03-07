@@ -1,0 +1,100 @@
+
+
+
+
+
+
+
+
+{% if skills_by_category %}
+    {% for category, subcategories in skills_by_category.items %}
+        <div class="panel panel-primary">
+            <div class="panel-heading" style="display: flex; justify-content: space-between; align-items: center;">
+                <h4 class="panel-title" style="margin: 0; flex-grow: 1; font-size: 17.5px">
+                    <!-- Use category and counter for unique collapse ID -->
+                    <a data-toggle="collapse" href="#collapse-cat-{{ category|slugify }}-" >{{ category|capfirst}}</a>
+                </h4>
+                    <a data-toggle="collapse" href="#collapse-cat-{{ category|slugify }}-" onclick="this.querySelector('i').classList.toggle('fa-angle-down'); this.querySelector('i').classList.toggle('fa-angle-up');"><i class="fa-solid fa-angle-down" style="color: #fff; font-size: 20px;"></i></a>
+            </div>
+            <div id="collapse-cat-{{ category|slugify }}-" class="panel-collapse-rated collapse">
+                {% for subcategory, skills in subcategories.items %}
+                    <div class="panel-body">
+                        <div class="panel panel-info" data-subcategory-counter="">
+                            <div class="panel-heading"  style="display: flex; justify-content: space-between; align-items: center; font-size: 16px">
+                                <!-- Use subcategory and counter for unique collapse ID -->
+                                <a data-toggle="collapse" href="#collapse-subcat-{{ category|slugify }}-{{ subcategory|slugify }}-{{skill_rating.skill.id}}">{{ subcategory|capfirst}}</a>
+
+                                
+                                <a data-toggle="collapse" href="#collapse-subcat-{{ category|slugify }}-{{ subcategory|slugify }}-{{skill_rating.skill.id}}" onclick="this.querySelector('i').classList.toggle('fa-angle-down'); this.querySelector('i').classList.toggle('fa-angle-up');">
+                                    
+                                    <i class="fa-solid fa-angle-down"  style="color: #31708f; font-size: 20px;"></i>
+                                </a>
+                            </div>
+                        
+                        <div id="collapse-subcat-{{ category|slugify }}-{{ subcategory|slugify }}-{{skill_rating.skill.id}}" class="panel-collapse-rated collapse">
+                            <ul>
+                                {% for skill_rating in skills %}
+                                    <div id="skill_{{subcategory|slugify}}{{category|slugify}}{{ skill_rating.skill.id }}">
+                                        <li >
+                                            {% if skill_rating.skill.new_skill.name != 'Sample_Skill' %}
+                                                <div class="d-flex align-items-center" style= "margin-top: 15px;">  <!-- Using Bootstrap Flexbox for alignment -->
+                                                    <div class="mr-2" style = "font-size: 15px; margin-bottom: 5px;">{{ skill_rating.skill.new_skill.name|capfirst }}</div> <!-- Adds space between skill name and stars -->
+                                                    <span class="fa fa-star {% if skill_rating.rating >= 1 %}checked{% endif %}" data-index="1" data-skill-id="{{ skill_rating.skill.id }}" data-skill-name="{{skill_rating.skill.new_skill.name}}" data-skill-category="{{category|slugify}}" data-skill-subcategory="{{subcategory|slugify}}"></span>
+                                                    <span class="fa fa-star {% if skill_rating.rating >= 2 %}checked{% endif %}" data-index="2" data-skill-id="{{ skill_rating.skill.id }}" data-skill-name="{{skill_rating.skill.new_skill.name}}" data-skill-category="{{category|slugify}}" data-skill-subcategory="{{subcategory|slugify}}"></span>
+                                                    <span class="fa fa-star {% if skill_rating.rating >= 3 %}checked{% endif %}" data-index="3" data-skill-id="{{ skill_rating.skill.id }}" data-skill-name="{{skill_rating.skill.new_skill.name}}" data-skill-category="{{category|slugify}}" data-skill-subcategory="{{subcategory|slugify}}"></span>
+                                                    <span class="fa fa-star {% if skill_rating.rating >= 4 %}checked{% endif %}" data-index="4" data-skill-id="{{ skill_rating.skill.id }}" data-skill-name="{{skill_rating.skill.new_skill.name}}" data-skill-category="{{category|slugify}}" data-skill-subcategory="{{subcategory|slugify}}"></span>
+                                                    <span class="fa fa-star {% if skill_rating.rating >= 5 %}checked{% endif %}" data-index="5" data-skill-id="{{ skill_rating.skill.id }}" data-skill-name="{{skill_rating.skill.new_skill.name}}" data-skill-category="{{category|slugify}}" data-skill-subcategory="{{subcategory|slugify}}"></span>
+
+                                                    
+                                                    <div class="rating-feedback" id="feedback-{{ skill_rating.skill.id }}" style="margin-left: 10px; display: inline-block;">
+                                                        <!-- Dynamic feedback will be inserted here -->
+                                                    </div>
+
+
+                                                    <!-- delete ajax button -->
+                                                    <a href="javascript:void(0);" class="glyphicon glyphicon-trash delete-icon{{skill_rating.skill.id}}" onclick="showConfirmation(this)" style="margin-left: 20px"></a>
+                                                    <p id='delete_msg_{{ skill_rating.skill.id }}' style="margin-bottom=0px; margin: 0px 0px; margin-left:20px; color: red; display: inline;"></p>
+                                                    <div class="confirm-box d-flex align-items-center" style="display: none; margin-left: 10px;">
+                                                        <span>Are you sure?</span>
+                                                        <button class="btn btn-sm btn-danger confirm-delete delete_skill_ajax" data-skill-id="{{ skill_rating.skill.id }}"  data-skill-name="{{ skill_rating.skill.new_skill.name }}" data-skill-subcategory="{{ subcategory|slugify }}" data-skill-category="{{category|slugify}}" onclick="document.getElementById('delete_no').click()">Yes</button>
+                                                        <button class="btn btn-sm btn-secondary undo_delete_no" id="delete_no" onclick="hideConfirmation(this)">No</button>
+                                                    </div>
+
+                                                    {%if skill_rating.mgrreview >= 1%}
+                                                    <span style="display: inline-flex; align-items: center;">
+                                                        <i class="fa-solid fa-check-double" style="color: green; padding-left: 20px; padding-right: 5px; font-size: 25px;"></i>
+                                                        <span>Reviewed by manager</span>
+                                                    </span>
+                                                    {%else%}
+                                                    <span style="display: inline-flex; align-items: center;">
+                                                        <i class="fa-solid fa-xmark" style="color: orange; padding-left: 20px; padding-right: 5px; font-size: 25px;"></i>
+                                                        <span>Review by manager pending</span>
+                                                    </span>
+                                                    {%endif%}
+
+                                                </div>
+                                                {% comment %} <br> {% endcomment %}
+                                            {% endif %}
+                                        </li>
+                                    </div>
+                                    {% if skill_rating.skill.new_skill.name == 'Sample_kill' %}
+                                        <h4>all skills are reviewed</h4>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <h4 class="text-danger" id='no_skill_reviewed_msg'>No skills reviewed yet.</h4>
+{% endif %} 
+
+
+
+
+
+

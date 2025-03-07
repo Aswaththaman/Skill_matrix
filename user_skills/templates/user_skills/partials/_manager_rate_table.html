@@ -1,0 +1,77 @@
+<div>
+    <table class= "table table-hover table_mgr">
+        <thead>
+            <td>Username</td>
+            <td>Category</td>
+            <td>Subcategory</td>
+            <td>Skill</td>
+            <td>User's Ratings</td>
+            <td>Manager Rating</td>
+            <td>Manager Verified</td>
+        </thead>
+        <tbody>
+
+            {%for user_rating in users_ratings%}
+            
+            <tr class="{{user_rating.user}}">
+                <td>{{ user_rating.user.username }}</td>
+                <td>{{user_rating.skill.categorysubcategory.category}}</td>
+                <td>{{user_rating.skill.categorysubcategory.subcategory}}</td>
+                <td>{{user_rating.skill.new_skill}}</td>
+                <td>
+                    <span data-rating="{{ user_rating.rating }}" style="display: none;">{{ user_rating.rating }}</span> <!-- Hidden value for sorting -->
+                    <span>
+                        <i class="fa-regular fa-star {% if user_rating.rating >= 1 %}fa-solid fa-star{% endif %} display_ratings_star"></i>
+                    </span>
+                    <span>
+                        <i class="fa-regular fa-star {% if user_rating.rating >= 2 %}fa-solid fa-star{% endif %} display_ratings_star"></i>
+                    </span>
+                    <span>
+                        <i class="fa-regular fa-star {% if user_rating.rating >= 3 %}fa-solid fa-star{% endif %} display_ratings_star"></i>
+                    </span>
+                    <span>
+                        <i class="fa-regular fa-star {% if user_rating.rating >= 4 %}fa-solid fa-star{% endif %} display_ratings_star"></i>
+                    </span>
+                    <span>
+                        <i class="fa-regular fa-star {% if user_rating.rating >= 5 %}fa-solid fa-star{% endif %} display_ratings_star"></i>
+                    </span>
+                </td>
+                
+
+                <td id="rating_id{{user_rating.id}}">
+                    <span data-rating="{{ user_rating.mgrreview }}" style="display: none;">{{ user_rating.mgrreview }}</span> <!-- Hidden value for sorting -->
+                    <span>
+                        <i class="fa-regular fa-star {% if user_rating.mgrreview >= 1 %}fa-solid fa-star{% endif %}" data-rating-id="{{ user_rating.id }}" data-index="1" data-username= "{{user_rating.user}}"></i>
+                    </span>
+                    <span>
+                        <i class="fa-regular fa-star {% if user_rating.mgrreview >= 2 %}fa-solid fa-star{% endif %}" data-rating-id="{{ user_rating.id }}" data-index="2" data-username= "{{user_rating.user}}"></i>
+                    </span>
+                    <span>
+                        <i class="fa-regular fa-star {% if user_rating.mgrreview >= 3 %}fa-solid fa-star{% endif %}" data-rating-id="{{ user_rating.id }}" data-index="3" data-username= "{{user_rating.user}}"></i>
+                    </span>
+                    <span>
+                        <i class="fa-regular fa-star {% if user_rating.mgrreview >= 4 %}fa-solid fa-star{% endif %}" data-rating-id="{{ user_rating.id }}" data-index="4" data-username= "{{user_rating.user}}"></i>
+                    </span>
+                    <span>
+                        <i class="fa-regular fa-star {% if user_rating.mgrreview >= 5 %}fa-solid fa-star{% endif %}" data-rating-id="{{ user_rating.id }}" data-index="5" data-username= "{{user_rating.user}}"></i>
+                    </span>
+                </td>
+                    
+                <td style="text-align: center;" id="mgr_rvw{{user_rating.id}}">
+                    
+                    <span>
+                        {% if user_rating.mgrreview > 0 %}
+                        <span style="display: none;">verified</span>
+                            <i class="fa-regular fa-circle-check"></i>
+                        {% else %}
+                        <span style="display: none;">unverified</span>
+                            <i class="fa-regular fa-circle-xmark"></i>
+                        {% endif %}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+</div>

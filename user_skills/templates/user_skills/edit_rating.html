@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <title>Edit Skill Rating</title>
+    <style>
+        .fa-star {
+            font-size: 30px;
+            cursor: pointer;
+            color: #ccc; /* Unselected stars */
+        }
+
+        .fa-star.checked {
+            color: #f39c12; /* Selected stars */
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Edit Rating for {{ skill.name }}</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="star-rating">
+            {% for i in star_range %}
+                <span class="fa fa-star {% if i <= rating.rating %}checked{% endif %}" data-index="{{ i }}"></span>
+            {% endfor %}
+        </div>
+
+        <!-- Hidden input to store the selected rating -->
+        <input type="hidden" id="rating" name="rating" value="{{ rating.rating }}">
+
+        <br>
+        <button type="submit">Submit Rating</button>
+    </form>
+
+    <br>
+    <a href="{% url 'rate_skill' user_id=request.user.id %}">Back to Ratings</a>
+
+    <script>
+        // JavaScript to handle the star click event and update the rating
+        document.querySelectorAll('.fa-star').forEach(function(star) {
+            star.addEventListener('click', function() {
+                var rating = this.getAttribute('data-index');
+                
+                // Update the stars' checked status
+                document.querySelectorAll('.fa-star').forEach(function(star) {
+                    if (star.getAttribute('data-index') <= rating) {
+                        star.classList.add('checked');
+                    } else {
+                        star.classList.remove('checked');
+                    }
+                });
+
+                // Update the hidden input field with the selected rating
+                document.getElementById('rating').value = rating;
+            });
+        });
+    </script>
+
+</body>
+</html>

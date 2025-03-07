@@ -1,0 +1,44 @@
+
+
+{% if rated_admin_data %}
+
+    <div class="table-responsive">
+        
+        <table class="table table-bordered table-hover">
+            <thead class= "table_header_skill_admin">
+                <tr>
+                    <th>User</th>
+                    <th>Rating</th>
+                    <th>Skill</th>
+                    <th>Category</th>
+                    <th>Subcategory</th>
+                </tr>
+            </thead>
+            <tbody class = "table_body_skill_admin">
+                {% for rating in rated_admin_data %}
+                    <tr>
+                        <td>{{ rating.user.username }}</td>
+                        <td>{{ rating.rating }} stars</td>
+                        <td>{{ rating.skill.new_skill.name }}</td>
+                        <td>{{rating.skill.categorysubcategory.category.name}}</td>
+                        <td>{{rating.skill.categorysubcategory.subcategory.name}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <p class="text-muted">No results found.</p>
+{% endif %}
+
+<style>
+    .table_header_skill_admin{
+        background-color: #F1AB86;
+    }
+
+    .table_body_skill_admin{
+        background-color: rgba(255, 255, 255, 0.5);
+    }
+
+
+</style>

@@ -1,0 +1,14 @@
+{% for category, subcategories in skills_by_category.items %}
+  <h3>{{ category }}</h3> <!-- Access the category name -->
+  {% for subcategory, skills in subcategories.items %}
+    <h4>{{ subcategory }}</h4> <!-- Access the subcategory name -->
+    <ul>
+      {% for skill in skills %}
+        <li>{{ skill.skill.new_skill.name }} ({{ skill.skill.categorysubcategory.category.name }} > {{ skill.skill.categorysubcategory.subcategory.name }})</li>
+        <!-- Accessing the skill name, category, and subcategory -->
+      {% endfor %}
+    </ul>
+  {% endfor %}
+{% endfor %}
+
+<h1>Welcome</h1>

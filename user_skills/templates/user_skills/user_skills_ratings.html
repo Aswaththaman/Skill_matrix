@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Skills and Ratings</title>
+</head>
+<body>
+    <h1>View User Skills and Ratings</h1>
+
+    <!-- User Selection Form -->
+    <form method="POST">
+        {% csrf_token %}
+        <label for="user">Select User:</label>
+        <select name="user" id="user">
+            <option value="">-- Select a User --</option>
+            {% for user in users %}
+                <option value="{{ user.id }}" {% if user == selected_user %}selected{% endif %}>
+                    {{ user.username }}
+                </option>
+            {% endfor %}
+        </select>
+        <button type="submit">View Skills and Ratings</button>
+    </form>
+
+    <hr>
+
+    <!-- Display Skills and Ratings -->
+    {% if selected_user %}
+        <h2>Skills and Ratings for {{ selected_user.username }}</h2>
+        <ul>
+            {% for skill_rating in skills_with_ratings %}
+                <li>
+                    {{ skill_rating.skill.name }} - {{ skill_rating.rating }}
+
+                    <br>
+                    <br>
+                    {% if skill_rating.review %}
+                        <strong>Review:</strong> {{ skill_rating.review }}
+                    {% endif %}
+                </li>
+            {% empty %}
+                <li>No skills or ratings available for this user.</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>

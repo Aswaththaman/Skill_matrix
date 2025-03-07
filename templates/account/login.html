@@ -1,0 +1,64 @@
+ {% comment %} {% load socialaccount %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <h2>Login to Your Account</h2>
+
+    <!-- Social Login Buttons Section -->
+    <div class="social-login-buttons">
+        <!-- Render the Azure login button -->
+        <a href="{% provider_login_url 'microsoft' %}" class="btn btn-primary">
+            Sign In with Microsoft
+        </a>
+    </div>
+
+</body>
+</html>
+
+
+
+  {% endcomment %}
+
+
+  {% comment %} {% load socialaccount %}
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Login</title>
+  </head>
+  <body>
+      <h2>Login to Your Account</h2>
+      <form method="POST">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit">Login</button>
+      </form>
+  
+      <p>Or login with your organization account:</p>
+      <a href="{% provider_login_url 'microsoft' %}">Sign in with Microsoft</a>
+  </body>
+  </html>
+   {% endcomment %}
+
+
+
+   <!-- templates/account/login.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+</head>
+<body>
+    <h1>Login</h1>
+    <a href="{% url 'saml2_auth:login' %}">Login with SAML</a>
+</body>
+</html>

@@ -1,0 +1,30 @@
+
+
+<div id="unrated_{{ skill.id }}" style="margin-top: 15px;">
+    <li>
+        <div id="unrated_{{ skill_subcatgory }}{{ skill_category }}_{{ skill.id }}">
+            <div class="d-flex align-items-center">
+                <!-- Skill Name -->
+                <div class="mr-2" style = "font-size: 15px; margin-bottom: 5px;">{{ skill.new_skill.name|capfirst }}</div>
+
+                <!-- Stars -->
+                <div class="stars d-flex">
+                    <span class="fa fa-star unrated" data-index="1" data-skill-id="{{ skill.id }}" data-skill-name="{{ skill.new_skill.name }}" data-skill-category="{{ skill_category }}" data-skill-subcategory="{{ skill_subcatgory }}"></span>
+                    <span class="fa fa-star unrated" data-index="2" data-skill-id="{{ skill.id }}" data-skill-name="{{ skill.new_skill.name }}" data-skill-category="{{ skill_category }}" data-skill-subcategory="{{ skill_subcatgory }}"></span>
+                    <span class="fa fa-star unrated" data-index="3" data-skill-id="{{ skill.id }}" data-skill-name="{{ skill.new_skill.name }}" data-skill-category="{{ skill_category }}" data-skill-subcategory="{{ skill_subcatgory }}"></span>
+                    <span class="fa fa-star unrated" data-index="4" data-skill-id="{{ skill.id }}" data-skill-name="{{ skill.new_skill.name }}" data-skill-category="{{ skill_category }}" data-skill-subcategory="{{ skill_subcatgory }}"></span>
+                    <span class="fa fa-star unrated" data-index="5" data-skill-id="{{ skill.id }}" data-skill-name="{{ skill.new_skill.name }}" data-skill-category="{{ skill_category }}" data-skill-subcategory="{{ skill_subcatgory }}"></span>
+                
+                
+                    <!-- Feedback beside stars -->
+                    <div class="rating-feedback ml-2" id="feedback-{{ skill.id }}" style="display: inline-block;">
+                        <!-- Dynamic feedback will appear here -->
+                    </div>
+                
+                </div>
+                
+            </div>
+        </div>
+    </li>
+    {% comment %} <br> {% endcomment %}
+</div>

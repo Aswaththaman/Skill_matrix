@@ -1,0 +1,42 @@
+<h1> skills for user</h1>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    
+    
+    <div class="container">
+        {% for category, subcategories in skill_structure.items %}
+            <div class="panel panel-default" style="margin-bottom: 10px;">
+                <!-- Category title -->
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" href="#collapse{{ forloop.counter }}">
+                            {{ category }}
+                        </a>
+                    </h4>
+                </div>
+    
+                <!-- Collapsible subcategories -->
+                <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse">
+                    <ul class="list-group">
+                        {% for subcategory, skills in subcategories.items %}
+                            <li class="list-group-item" style="margin-left: 20px;">
+                                <strong>{{ subcategory }}</strong> <!-- Subcategory title -->
+                                
+                                <ul>
+                                    {% for skill in skills %}
+                                        <li style="margin-left: 40px;">{{ skill }}</li> <!-- Skills -->
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endfor %}
+    </div>

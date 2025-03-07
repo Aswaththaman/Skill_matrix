@@ -1,0 +1,6 @@
+<h1>your skill review has been stored</h1>
+
+<form action="{% url 'logout' %}" method="POST">
+    {% csrf_token %}
+    <button type="submit">Logout</button>
+</form>

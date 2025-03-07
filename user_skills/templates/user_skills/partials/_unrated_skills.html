@@ -1,0 +1,207 @@
+
+
+ 
+ 
+
+<div class="panel-group" id="accordion">
+    {% for category, subcategories in unrated_skills_by_category.items %}
+    <div class="panel panel-warning">
+        <div class="panel-heading" style="display: flex; justify-content: space-between; align-items: center; background-color: #595959; color:white;">
+            <h4 class="panel-title" style = "font-size: 17.5px">
+                <a data-toggle="collapse" href="#collapse-unrated-cat{{ category|slugify }}" aria-expanded="false" aria-controls="collapse-unrated-cat{{ category|slugify }}" onclick="this.querySelector('i').classList.toggle('fa-angle-down'); this.querySelector('i').classList.toggle('fa-angle-up');">
+                    {{ category|capfirst }}
+                </a>
+                
+            </h4>
+                <a data-toggle="collapse" href="#collapse-unrated-cat{{ category|slugify }}" aria-expanded="false" aria-controls="collapse-unrated-cat{{ category|slugify }}" onclick="this.querySelector('i').classList.toggle('fa-angle-down'); this.querySelector('i').classList.toggle('fa-angle-up');">
+                    <i class="fa-solid fa-angle-down" style="color: #fff; font-size: 20px;"></i>
+                </a>
+        </div>
+        <div id="collapse-unrated-cat{{ category|slugify }}" class="panel-collapse-unrated collapse">
+            
+            {% for subcategory, skills in subcategories.items %}
+            <div class="panel-body">
+                <div class="panel panel-warning">
+                    <div class="panel-heading" style="display: flex; justify-content: space-between; align-items: center;  background-color: #cccccc; color:black font-size: 16px">
+                        <a data-toggle="collapse" href="#collapse-unrated-subcat{{ subcategory|slugify }}-{{category|slugify}}" aria-expanded="false" aria-controls="collapse-unrated-subcat{{ subcategory|slugify }}-{{category|slugify}}" onclick="this.querySelector('i').classList.toggle('fa-angle-down'); this.querySelector('i').classList.toggle('fa-angle-up');">
+                            {{ subcategory|capfirst }}
+                        </a>
+
+
+                        <a data-toggle="collapse" href="#collapse-unrated-subcat{{ subcategory|slugify }}-{{category|slugify}}" aria-expanded="false" aria-controls="collapse-unrated-subcat{{ subcategory|slugify }}-{{category|slugify}}" onclick="this.querySelector('i').classList.toggle('fa-angle-down'); this.querySelector('i').classList.toggle('fa-angle-up');">
+                            
+                            <i class="fa-solid fa-angle-down"  style="color: black; font-size: 20px;"></i>
+                        </a>
+                    </div>
+                    <div id="collapse-unrated-subcat{{ subcategory|slugify }}-{{category|slugify}}" class="panel-collapse-unrated collapse">
+                        <ul>
+                            {% for skill in skills %}
+                            {% if skills|length == 1 and skills.0.new_skill.name == 'Sample_Skill' %}
+                                <h4 id="all_rated{{ subcategory|slugify }}{{category|slugify}}">All skills are reviewed</h4>
+                            {% else %}
+                                {% if skill.new_skill.name != 'Sample_Skill' %}
+                                <div id="unrated_{{ skill.id }}" style="margin-top: 15px;">
+                                    <div id="unrated_{{ subcategory|slugify }}{{ category|slugify }}_{{ skill.id }}">
+                                        <li>
+                                            <div class="d-flex align-items-center">
+                                                <div class="mr-2" style = "font-size: 15px;  margin-bottom: 5px;">{{ skill.new_skill.name|capfirst }}</div>
+                                                
+                                                <span class="fa fa-star unrated" data-index="1" data-skill-id="{{ skill.id }}" data-skill-name="{{ skill.new_skill.name }}" data-skill-category="{{ category|slugify }}" data-skill-subcategory="{{ subcategory|slugify }}"></span>
+                                                <span class="fa fa-star unrated" data-index="2" data-skill-id="{{ skill.id }}" data-skill-name="{{ skill.new_skill.name }}" data-skill-category="{{ category|slugify }}" data-skill-subcategory="{{ subcategory|slugify }}"></span>
+                                                <span class="fa fa-star unrated" data-index="3" data-skill-id="{{ skill.id }}" data-skill-name="{{ skill.new_skill.name }}" data-skill-category="{{ category|slugify }}" data-skill-subcategory="{{ subcategory|slugify }}"></span>
+                                                <span class="fa fa-star unrated" data-index="4" data-skill-id="{{ skill.id }}" data-skill-name="{{ skill.new_skill.name }}" data-skill-category="{{ category|slugify }}" data-skill-subcategory="{{ subcategory|slugify }}"></span>
+                                                <span class="fa fa-star unrated" data-index="5" data-skill-id="{{ skill.id }}" data-skill-name="{{ skill.new_skill.name }}" data-skill-category="{{ category|slugify }}" data-skill-subcategory="{{ subcategory|slugify }}"></span>
+                                                
+                                                <div class="rating-feedback" id="feedback-{{ skill.id }}" style="margin-left: 10px; display: inline-block;"></div>
+                                            </div>
+                                        </li>
+                                    </div>
+                                </div>
+                                {% comment %} <br> {% endcomment %}
+                                {% endif %}
+                            {% endif %}
+                            {% endfor %}
+                            {% if admin_user %}
+                            <!-- Trigger Button (Optional, place it where you want to trigger the modal) -->
+                            <button type="submit" value ="submit" class="btn btn-primary" data-toggle="modal" data-target="#addSkillModal{{ subcategory|slugify }}" style = "background-color:#d1912e">
+                                Add Skill
+                            </button>
+                            
+                            <!-- Modal -->
+                            <div class="modal fade" id="addSkillModal{{ subcategory|slugify }}" tabindex="-1" role="dialog" aria-labelledby="addSkillModalLabel{{ subcategory|slugify }}" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            <h5 class="modal-title" id="addSkillModalLabel{{ subcategory|slugify }}">Add New Skill to the Sub-Category "{{ subcategory }}"</h5>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="post" style="margin-left: 10px;">
+                                                {% csrf_token %}
+                                                <div class="form-group">
+                                                    <label for="{{ add_skill.skill_name.id_for_label }}">{{ add_skill.skill_name.label }}</label>
+                                                    {{ add_skill.skill_name }}
+                                                </div>
+                            
+                                                <input type="hidden" name="category" value="{{ category }}">
+                                                <input type="hidden" name="subcategory" value="{{ subcategory }}">
+                            
+                                                <button type="submit" class="btn btn-primary" name="skill_submit" value="submit">Add Skill</button>
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            {% endif %}
+                            
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% if admin_user %}
+            <!-- Trigger button to open the modal -->
+            <button type="button" class="btn btn-primary ml-3" data-toggle="modal" data-target="#addSubcategoryModal{{ category|slugify }}" style="margin-left: 16.5px; background-color:#1cb3e3">
+                Add New Sub-Category
+            </button>
+            <br>
+            <br>
+            <!-- Modal Structure -->
+            <div class="modal fade" id="addSubcategoryModal{{ category|slugify }}" tabindex="-1" role="dialog" aria-labelledby="addSubcategoryModalLabel{{ category|slugify }}" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h5 class="modal-title" id="addSubcategoryModalLabel{{ category|slugify }}">Add New Sub-Category to the Category "{{ category }}"</h5>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Form Inside the Modal -->
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="{{ add_skill.subcategory.id_for_label }}">{{ add_skill.subcategory.label }}</label>
+                                    {{ add_skill.subcategory }}
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="{{ add_skill.new_skill.name.id_for_label }}">{{ add_skill.skill_name.label }}</label>
+                                    {{ add_skill.skill_name }}
+                                </div>
+
+                                <input type="hidden" name="category" value="{{ category }}">
+                                <button type="submit" class="btn btn-primary" name="subcat_submit">Add Sub-Category</button>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {% endif %}
+            
+            
+        </div>
+    </div>
+    {% endfor %}
+    
+
+
+    {% if admin_user %}
+    <!-- Button to trigger modal -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCategoryModal" style= "background-color:rgb(149, 77, 249); margin-left: 5px; margin-top: 15px;">
+        Add New Category
+    </button>
+    
+    <!-- Modal -->
+    <div id="addCategoryModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="addCategoryModalLabel">Add New Category</h4>
+                </div>
+                <div class="modal-body">
+                    <!-- Form inside the modal -->
+                    
+                    <form method="post" style="margin-left: 10px;">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="{{ add_skill.category.id_for_label }}">{{ add_skill.category.label }}</label>
+                            {{ add_skill.category }}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="{{ add_skill.subcategory.id_for_label }}">{{ add_skill.subcategory.label }}</label>
+                            {{ add_skill.subcategory }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ add_skill.new_skill.name.id_for_label }}">{{ add_skill.skill_name.label }}</label>
+                            {{ add_skill.skill_name }}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" name="cat_submit">Add New Category</button>
+                    </form>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <!-- Optionally, you can add a submit button for the form here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div> 
